@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cine Star - Gestión Integral</title>
+    <style>
+        /* Estilos globales */
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f4f4f9; 
+            color: #333; 
+        }
+        
+        /* Encabezado Azul Marino corporativo */
+        .header-logo {
+            background-color: #031135; 
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header-logo img {
+            max-width: 250px; 
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Contenedor del contenido principal */
+        .container { 
+            max-width: 700px; 
+            background: white; 
+            padding: 30px; 
+            margin: 40px auto; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        }
+        
+        h1 { 
+            color: #031135; 
+            text-align: center;
+            margin-top: 0;
+            font-size: 26px;
+        }
+        
+        /* Estructura de los Módulos */
+        .modulo { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border-left: 5px solid #031135; 
+            background: #f8f9fa; 
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .status {
+            font-weight: bold;
+        }
+        
+        button { 
+            background: #031135; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold;
+            margin-top: 5px;
+            transition: background 0.2s;
+        }
+        
+        button:hover { 
+            background: #0b2663; 
+        }
+        
+        /* Colores temáticos por módulo */
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-warning:hover { background: #e0a800; }
+        .btn-info { background: #17a2b8; }
+        .btn-info:hover { background: #138496; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+    </style>
+</head>
+<body>
+
+    <div class="header-logo">
+        <img src="/images/cinestar_logo.jpg" alt="Cine Star Logo">
+    </div>
+
+    <div class="container">
+        <h1>Sistema Integral Cine Star</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">Panel de Control General e Incrementos del Sistema</p>
+        
+        <div class="modulo" style="border-left-color: #28a745;">
+            <h3>Taquilla</h3>
+            <p>Estado del Motor: <span class="status" style="color: #28a745;">OPERATIVO (H2 Database Activa)</span></p>
+            <p>Monitoreo del Sprint 4: Pruebas unitarias y de integración validadas al 100%.</p>
+            <button class="btn-success" onclick="alert('¡Boleto Emitido Exitosamente!\nDescuento del 15% aplicado si es Cliente Frecuente.')">Simular Venta de Boleto</button>
+        </div>
+
+        <div class="modulo" style="border-left-color: #17a2b8;">
+            <h3>Alimentos y Bebidas</h3>
+            <p>Estado del Motor: <span class="status" style="color: #17a2b8;">ONLINE</span></p>
+            <p>Gestión de combos, palomitas, refrescos y promociones del día.</p>
+            <button class="btn-info" onclick="alert('🍿 Combo Tradicional Agregado a la Orden.\nCalculando total con la capa de servicios...')">Simular Venta de Dulcería</button>
+        </div>
+
+        <div class="modulo" style="border-left-color: #dc3545;">
+            <h3>Gestión de Inventarios</h3>
+            <p>Estado del Motor: <span class="status" style="color: #dc3545;">ONLINE</span></p>
+            <p>Control de stock de insumos (vasos, cajas de palomitas, papelería de taquilla).</p>
+            <button class="btn-danger" onclick="alert('🔍 Escaneando niveles de stock...\nInsumos estables. Alerta de reabastecimiento: DESACTIVADA.')">Verificar Stock de Insumos</button>
+        </div>
+
+        <div class="modulo" style="border-left-color: #ffc107;">
+    <h3>🛠️ Módulo: Help Desk & Soporte Técnico (Activo)</h3>
+    <p>Estado del Motor: <span class="status" style="color: #28a745;">ONLINE (API REST)</span></p>
+    <p>Reportar incidencias técnicas en salas o terminales:</p>
+    
+    <input type="text" id="ticketInput" placeholder="Ej: Falla en proyector Sala 3" style="width: 70%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+    <button class="btn-warning" onclick="enviarTicket()">Enviar Reporte</button>
+    
+    <div id="historialTickets" style="margin-top: 15px; font-size: 14px; color: #555;"></div>
+</div>
+
+<script>
+function enviarTicket() {
+    const detalle = document.getElementById('ticketInput').value;
+    if(!detalle) { alert('Por favor, escribe el problema.'); return; }
+
+    fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: detalle
+    })
+    .then(res => res.text())
+    .then(data => {
+        alert(data);
+        document.getElementById('ticketInput').value = '';
+        actualizarHistorial();
+    });
+}
+
+function actualizarHistorial() {
+    fetch('/api/tickets')
+    .then(res => res.json())
+    .then(tickets => {
+        const div = document.getElementById('historialTickets');
+        div.innerHTML = '<strong>Tickets Activos:</strong><br>' + 
+            (tickets.length === 0 ? 'Ninguno' : tickets.map(t => '• ' + t).join('<br>'));
+    });
+}
+// Cargar al inicio
+actualizarHistorial();
+</script>
+    </div>
+
+</body>
+</html>

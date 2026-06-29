@@ -1,0 +1,27 @@
+Last login: Thu Jun 18 17:29:29 on ttys000
+josemanuelsanchezdeluna@MacBook-Air-de-Jose ~ % cd /Users/josemanuelsanchezdeluna/NetBeansProjects/sistema
+josemanuelsanchezdeluna@MacBook-Air-de-Jose sistema % >....                     
+  template:
+    metadata:
+      labels:
+        app: cinestar
+    spec:
+      containers:
+      - name: cinestar-container
+        image: gcr.io/proyecto-cinestar-103916456512/cinestar-app:v1
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cinestar-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: cinestar
+EOF
+josemanuelsanchezdeluna@MacBook-Air-de-Jose sistema % 
